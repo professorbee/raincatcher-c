@@ -3,8 +3,6 @@
 
 #define MAX_DROPS 5
 
-#define MAX_BATCH_ELEMENTS 8192
-
 #define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 450
 
@@ -15,6 +13,28 @@ typedef struct Drop {
     Vector2 speed;
 } Drop;
 
+
+int spawnDrop(struct Drop *dropArray, int dropCount) {
+    if (dropCount < MAX_DROPS) {
+        dropArray[dropCount].position.x = rand() % (SCREEN_WIDTH - SPRITE_SIZE);
+        dropArray[dropCount].position.y = -10;
+        dropArray[dropCount].speed.y = 250;
+        dropArray[dropCount].speed.x = 0;
+        return dropCount + 1;
+    }
+    return dropCount;
+}
+
+int collision(struct Drop a, struct Drop b) {
+    if (a.position.x < b.position.x + SPRITE_SIZE &&
+        a.position.x + SPRITE_SIZE > b.position.x &&
+        a.position.y < b.position.y + SPRITE_SIZE &&
+        a.position.y + SPRITE_SIZE > b.position.y)
+    {
+        return 1;
+    }
+    return 0;
+}
 
 int main(void)
 {
@@ -64,9 +84,9 @@ int main(void)
             dropsCount = spawnDrop(drops, dropsCount);
             timer = 0;
         }
-        if (IsKeyDown(KEY_RIGHT)) player.speed.x = 250;
-        if (IsKeyDown(KEY_LEFT)) player.speed.x = -250;
-
+        if (IsKeyDown(KEY_RIGHT)) player.speed.x = 400;
+        if (IsKeyDown(KEY_LEFT)) player.speed.x = -400;
+	if ((IsKeyDown(KEY_RIGHT) && IsKeyDown(KEY_LEFT)) || (!IsKeyDown(KEY_RIGHT) && !IsKeyDown(KEY_LEFT))) player.speed.x = 0;
         player.position.x += player.speed.x * delta;
 
         if (player.position.x > (SCREEN_WIDTH - (bucketTexture.width))) player.position.x = (SCREEN_WIDTH - (bucketTexture.width));
@@ -114,24 +134,4 @@ int main(void)
     return 0;
 }
 
-int spawnDrop(struct Drop *dropArray, int dropCount) {
-    if (dropCount < MAX_DROPS) {
-        dropArray[dropCount].position.x = rand() % (SCREEN_WIDTH - SPRITE_SIZE);
-        dropArray[dropCount].position.y = -10;
-        dropArray[dropCount].speed.y = 250;
-        dropArray[dropCount].speed.x = 0;
-        return dropCount + 1;
-    }
-    return dropCount;
-}
 
-int collision(struct Drop a, struct Drop b) {
-    if (a.position.x < b.position.x + SPRITE_SIZE &&
-        a.position.x + SPRITE_SIZE > b.position.x &&
-        a.position.y < b.position.y + SPRITE_SIZE &&
-        a.position.y + SPRITE_SIZE > b.position.y) 
-    {
-        return 1;
-    }
-    return 0;
-}
