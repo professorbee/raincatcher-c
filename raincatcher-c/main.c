@@ -128,14 +128,14 @@ int spawnDrop(struct Drop *dropArray, int dropCount) {
     return dropCount;
 }
 
-bool collision(struct Drop a, struct Drop b) {
+int collision(struct Drop a, struct Drop b) {
     if (a.position.x < b.position.x + SPRITE_SIZE &&
         a.position.x + SPRITE_SIZE > b.position.x &&
         a.position.y < b.position.y + SPRITE_SIZE &&
         a.position.y + SPRITE_SIZE > b.position.y) 
     {
-        return true;
+        return 1;
     }
 
-    return false;
+    return 0;
 }
