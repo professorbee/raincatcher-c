@@ -27,7 +27,7 @@ int main(void)
     time_t t;
     srand((unsigned)time(&t));
 
-    InitWindow(screenWidth, screenHeight, "raylib [core] example - basic window");
+    InitWindow(screenWidth, screenHeight, "raylib rain game");
 
     // Load bucket texture.
     Image bucketImage = LoadImage("sprites/bucket.png");
@@ -64,7 +64,6 @@ int main(void)
             dropsCount = spawnDrop(drops, dropsCount);
             timer = 0;
         }
-
         if (IsKeyDown(KEY_RIGHT)) player.speed.x = 250;
         if (IsKeyDown(KEY_LEFT)) player.speed.x = -250;
 
@@ -98,10 +97,8 @@ int main(void)
                     dropsCount--;
                     score++;
                 }
-                DrawTexture(dropTexture, (int)drops[i].position.x, (int)drops[i].position.y, WHITE);
-                
+                DrawTexture(dropTexture, (int)drops[i].position.x, (int)drops[i].position.y, WHITE);   
             }
-
         EndDrawing();
         timer += delta;
     }
@@ -119,7 +116,7 @@ int main(void)
 
 int spawnDrop(struct Drop *dropArray, int dropCount) {
     if (dropCount < MAX_DROPS) {
-        dropArray[dropCount].position.x = rand() % SCREEN_WIDTH;
+        dropArray[dropCount].position.x = rand() % (SCREEN_WIDTH - SPRITE_SIZE);
         dropArray[dropCount].position.y = -10;
         dropArray[dropCount].speed.y = 250;
         dropArray[dropCount].speed.x = 0;
@@ -136,6 +133,5 @@ int collision(struct Drop a, struct Drop b) {
     {
         return 1;
     }
-
     return 0;
 }
