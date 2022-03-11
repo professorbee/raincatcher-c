@@ -4,21 +4,23 @@
 #define MAX_DROPS 5
 
 #define SCREEN_WIDTH 800
-#define SCREEN_HEIGHT 450
+#define SCREEN_HEIGHT 900
 
 #define SPRITE_SIZE 64
+#define SPAWN_TIME 0.5f
+#define PLAYER_SPEED 800
+#define DROP_SPEED 500
 
 typedef struct Drop {
     Vector2 position;
     Vector2 speed;
 } Drop;
 
-
 int spawnDrop(struct Drop *dropArray, int dropCount) {
     if (dropCount < MAX_DROPS) {
         dropArray[dropCount].position.x = rand() % (SCREEN_WIDTH - SPRITE_SIZE);
         dropArray[dropCount].position.y = -10;
-        dropArray[dropCount].speed.y = 250;
+        dropArray[dropCount].speed.y = DROP_SPEED;
         dropArray[dropCount].speed.x = 0;
         return dropCount + 1;
     }
@@ -71,7 +73,7 @@ int main(void)
     struct Drop player;
 
     player.position.x = SCREEN_WIDTH / 2 - (bucketTexture.width / 2);
-    player.position.y = 350 - (bucketTexture.height / 2);
+    player.position.y = (SCREEN_HEIGHT - 150) - (bucketTexture.height / 2);
     player.speed.y = 0;
     player.speed.x = 0;
 
@@ -80,13 +82,13 @@ int main(void)
     while (!WindowShouldClose()) 
     {
         delta = GetFrameTime();
-        if (timer > 1) {
+        if (timer > SPAWN_TIME) {
             dropsCount = spawnDrop(drops, dropsCount);
             timer = 0;
         }
-        if (IsKeyDown(KEY_RIGHT)) player.speed.x = 400;
-        if (IsKeyDown(KEY_LEFT)) player.speed.x = -400;
-	if ((IsKeyDown(KEY_RIGHT) && IsKeyDown(KEY_LEFT)) || (!IsKeyDown(KEY_RIGHT) && !IsKeyDown(KEY_LEFT))) player.speed.x = 0;
+        if (IsKeyDown(KEY_RIGHT)) player.speed.x = PLAYER_SPEED;
+        if (IsKeyDown(KEY_LEFT)) player.speed.x = -PLAYER_SPEED;
+	    // if ((IsKeyDown(KEY_RIGHT) && IsKeyDown(KEY_LEFT)) || (!IsKeyDown(KEY_RIGHT) && !IsKeyDown(KEY_LEFT))) player.speed.x = 0;
         player.position.x += player.speed.x * delta;
 
         if (player.position.x > (SCREEN_WIDTH - (bucketTexture.width))) player.position.x = (SCREEN_WIDTH - (bucketTexture.width));
@@ -98,12 +100,12 @@ int main(void)
             
             DrawText(TextFormat("%i", score), 48, 48, 48, RED);
 
-            DrawTexture(bucketTexture, player.position.x, player.position.y, WHITE);
+            DrawTexture(bucketTexture, player.position.x, player.position.y, BLUE);
             
             for (int i = 0; i < dropsCount; i++) {
                 drops[i].position.y += (drops[i].speed.y * delta);
                 drops[i].position.x += (drops[i].speed.x * delta);
-                if (drops[i].position.y > 400) {
+                if (drops[i].position.y > SCREEN_HEIGHT - SPRITE_SIZE) {
                     // I can't believe this works
                     tempDrop = drops[i];
                     drops[i] = drops[dropsCount - 1];
@@ -133,5 +135,3 @@ int main(void)
 
     return 0;
 }
-
-
